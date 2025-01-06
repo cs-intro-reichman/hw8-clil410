@@ -30,8 +30,9 @@ public class Network {
      *  If there is no such user, returns null.
      *  Notice that the method receives a String, and returns a User object. */
     public User getUser(String name) {
+        String properName = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equalsIgnoreCase(name)) {
+            if (users[i].getName().equals(properName)) {
                 return users[i];
             }
         }
@@ -65,13 +66,15 @@ public class Network {
         boolean name1IsUser = false;
         boolean name2IsUser = false;
         int indexName1 = -1;
+        String properName1 = name1.substring(0, 1).toUpperCase() + name1.substring(1).toLowerCase();
+        String properName2 = name2.substring(0, 1).toUpperCase() + name2.substring(1).toLowerCase();
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equals(name1)) {
+            if (users[i].getName().equals(properName1)) {
                 name1IsUser = true;
                 indexName1 = i;
                 //System.out.println("found name 1 " + users[i].getName()); 
             }
-            if (users[i].getName().equals(name2)) {
+            if (users[i].getName().equals(properName2)) {
                 name2IsUser = true;
                 //System.out.println("found name 2 " + users[i].getName()); 
             }
@@ -80,7 +83,7 @@ public class Network {
             System.out.println ("one of the users is not in the network");
             return false;
         }
-        return (users[indexName1].addFollowee(name2));
+        return (users[indexName1].addFollowee(properName2));
     }
     
     /** For the user with the given name, recommends another user to follow. The recommended user is
@@ -126,10 +129,11 @@ public class Network {
     /** Returns the number of times that the given name appears in the follows lists of all
      *  the users in this network. Note: A name can appear 0 or 1 times in each list. */
     private int followeeCount(String name) {
+        String properName = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         int followsSum = 0;
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equals(name)) continue;
-            int isFollow = (users[i].follows(name)) ? 1 : 0;
+            if (users[i].getName().equals(properName)) continue;
+            int isFollow = (users[i].follows(properName)) ? 1 : 0;
             followsSum += isFollow;   
         }
         return followsSum;
