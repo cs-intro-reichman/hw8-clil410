@@ -22,17 +22,12 @@ public class Network {
         userCount = 3;
     }
 
-    public int getUserCount() {
-        return this.userCount;
-    }
-
     /** Finds in this network, and returns, the user that has the given name.
      *  If there is no such user, returns null.
      *  Notice that the method receives a String, and returns a User object. */
     public User getUser(String name) {
-        String properName = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equals(properName)) {
+            if (users[i].getName().equals(name)) {
                 return users[i];
             }
         }
@@ -63,18 +58,22 @@ public class Network {
      *  If any of the two names is not a user in this network,
      *  or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
+        if (name1 == null || name2 == null) {
+            return false;
+        }
+        if (name1.equals(name2)) {
+            return false;
+        }
         boolean name1IsUser = false;
         boolean name2IsUser = false;
         int indexName1 = -1;
-        String properName1 = name1.substring(0, 1).toUpperCase() + name1.substring(1).toLowerCase();
-        String properName2 = name2.substring(0, 1).toUpperCase() + name2.substring(1).toLowerCase();
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equals(properName1)) {
+            if (users[i].getName().equals(name1)) {
                 name1IsUser = true;
                 indexName1 = i;
                 //System.out.println("found name 1 " + users[i].getName()); 
             }
-            if (users[i].getName().equals(properName2)) {
+            if (users[i].getName().equals(name2)) {
                 name2IsUser = true;
                 //System.out.println("found name 2 " + users[i].getName()); 
             }
@@ -83,7 +82,7 @@ public class Network {
             System.out.println ("one of the users is not in the network");
             return false;
         }
-        return (users[indexName1].addFollowee(properName2));
+        return (users[indexName1].addFollowee(name2));
     }
     
     /** For the user with the given name, recommends another user to follow. The recommended user is
@@ -113,9 +112,12 @@ public class Network {
     /** Computes and returns the name of the most popular user in this network: 
      *  The user who appears the most in the follow lists of all the users. */
     public String mostPopularUser() {
+        if (userCount == 0) {
+            return null;
+        }
         String mostPopular = users[0].getName();
-        int numOfFollows = 0;
-        for (int i = 0; i < userCount; i++) {
+        int numOfFollows = followeeCount(mostPopular);
+        for (int i = 1; i < userCount; i++) {
             String name = users[i].getName();
             int count = followeeCount(name);
             if (count > numOfFollows) {
@@ -129,11 +131,10 @@ public class Network {
     /** Returns the number of times that the given name appears in the follows lists of all
      *  the users in this network. Note: A name can appear 0 or 1 times in each list. */
     private int followeeCount(String name) {
-        String properName = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         int followsSum = 0;
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equals(properName)) continue;
-            int isFollow = (users[i].follows(properName)) ? 1 : 0;
+            if (users[i].getName().equals(name)) continue;
+            int isFollow = (users[i].follows(name)) ? 1 : 0;
             followsSum += isFollow;   
         }
         return followsSum;
@@ -141,13 +142,18 @@ public class Network {
 
     // Returns a textual description of all the users in this network, and who they follow.
     public String toString() { 
+        if (userCount == 0) {
+            return "Network:";
+        }
         String ans = "Network: \n";
         for (int i = 0; i < userCount; i++) {
             ans += (users[i].getName() + " -> ");
             for (int j = 0; j < users[i].getfCount(); j++) {
                 ans = ans + users[i].getfFollows()[j] + " ";
             }
-            ans += "\n";
+            if (i < userCount - 1) {
+                ans += "\n";
+            }
         }
         return (ans);
     }
