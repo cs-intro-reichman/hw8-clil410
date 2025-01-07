@@ -15,7 +15,7 @@ public class Network {
     public int getUserCount() {
         return this.userCount;
     }
-    
+
     /** Creates a network  with some users. The only purpose of this constructor is 
      *  to allow testing the toString and getUser methods, before implementing other methods. */
     public Network(int maxUserCount, boolean gettingStarted) {
@@ -30,8 +30,9 @@ public class Network {
      *  If there is no such user, returns null.
      *  Notice that the method receives a String, and returns a User object. */
     public User getUser(String name) {
+        String properName = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equals(name)) {
+            if (users[i].getName().equals(properName)) {
                 return users[i];
             }
         }
@@ -149,9 +150,10 @@ public class Network {
         if (userCount == 0) {
             return "Network:";
         }
-        String ans = "Network: \n";
+        String ans = "Network:";
+        ans += "\n";
         for (int i = 0; i < userCount; i++) {
-            ans += (users[i].getName() + " -> ");
+            ans += users[i].getName() + " -> ";
             for (int j = 0; j < users[i].getfCount(); j++) {
                 ans = ans + users[i].getfFollows()[j] + " ";
             }
